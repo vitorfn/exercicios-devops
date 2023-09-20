@@ -1,0 +1,29 @@
+volumes:
+  app-vol:
+
+networks:
+  app-net:
+
+services:
+  app-node:
+    depends_on:
+      - postgres-app
+    build: .
+    ports:
+      - 3000:3000
+    networks:
+      - app-net
+    command: node app.js
+  postgres-app:
+    image: postgres:latest
+    volumes:
+      - app-vol:/val/lib/postgresql/data
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
+    environment:
+      - POSTGRES_USER=todolistuser
+      - POSTGRES_PASSWORD=todolistpassword
+      - POSTGRES_DB=todolist
+    networks:
+      - app-net
+    ports:
+      - 5432:5432
